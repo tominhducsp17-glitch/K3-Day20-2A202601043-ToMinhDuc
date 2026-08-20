@@ -138,14 +138,21 @@ Các phần học viên cần tự làm:
 6. Thêm tracing provider thật: LangSmith, Langfuse hoặc OpenTelemetry.
 7. Viết benchmark report.
 
-## Deliverables
+## Deliverables & Submission Summary
 
-Học viên nộp:
+Hệ thống đã được hoàn thiện đầy đủ 100% theo các yêu cầu của Lab 20:
 
-1. GitHub repo cá nhân.
-2. Screenshot trace hoặc link trace.
-3. `reports/benchmark_report.md` so sánh single vs multi-agent.
-4. Một đoạn giải thích failure mode và cách fix.
+1. **GitHub Repo cá nhân:** Toàn bộ source code trong `src/multi_agent_research_lab/` (Supervisor, Researcher, Analyst, Writer, Critic, LangGraph Workflow, LLM & Search clients) đã hoàn thành, vượt qua 100% `pytest` và `ruff`.
+2. **LangSmith Trace Evidence:**
+   - **Public Trace URL:** [LangSmith Multi-Agent Execution Trace](https://smith.langchain.com/public/7aa75c6e-a3dc-4dda-9b40-72ecd1fdae83/r/01a01d55-be26-7831-802e-5c5767cae371?start_time=2026-08-20T04%3A02%3A33.638088Z)
+   - **Run ID:** `01a01d55-be26-7831-802e-5c5767cae371`
+   - **Trace Screenshot:**
+   
+   ![LangSmith Trace Evidence](reports/trace_evidence.png)
+
+3. **Báo cáo Benchmark chi tiết:** Xem tại [`reports/benchmark_report.md`](reports/benchmark_report.md) (bao gồm bảng so sánh định lượng Latency, Cost, Quality, Citation Coverage, Failure Rate giữa Single-Agent vs Multi-Agent).
+4. **Phân tích Failure Modes & Exit Ticket:** Đã hoàn thành trong [`reports/benchmark_report.md`](reports/benchmark_report.md) và [`docs/lab_guide.md`](docs/lab_guide.md).
+
 
 ## References
 
