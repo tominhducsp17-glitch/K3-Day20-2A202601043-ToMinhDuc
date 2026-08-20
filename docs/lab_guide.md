@@ -113,5 +113,11 @@ Cách khắc phục (chọn 1 trong 3):
 
 Mỗi nhóm trả lời 2 câu:
 
-1. Case nào nên dùng multi-agent? Vì sao?
-2. Case nào không nên dùng multi-agent? Vì sao?
+1. **Case nào nên dùng multi-agent? Vì sao?**
+   - **Trả lời:** Nên dùng multi-agent cho các bài toán nghiên cứu chuyên sâu, phân tích đa chiều phức tạp, tổng hợp tài liệu quy mô lớn và quy trình cần kiểm chứng dữ liệu chặt chẽ (Deep Research, Multi-perspective Synthesis, Fact Verification).
+   - **Lý do:** Tách biệt rõ ràng từng vai trò (Supervisor điều phối, Researcher tìm kiếm, Analyst phản biện, Writer biên tập, Critic đánh giá) giúp mỗi agent sở hữu context window gọn gàng, giảm thiểu hiện tượng "lost-in-the-middle" và hạn chế hallucination, đồng thời cho phép gắn các guardrail kiểm tra chất lượng ở từng chặng.
+
+2. **Case nào không nên dùng multi-agent? Vì sao?**
+   - **Trả lời:** Không nên dùng multi-agent cho các tác vụ đơn giản, phản hồi tức thời hoặc yêu cầu độ trễ cực thấp (Single Q&A, Translation, Code Completion, Chatbot thông thường).
+   - **Lý do:** Multi-agent làm tăng đáng kể độ trễ (latency do phải gọi nhiều round-trip LLM tuần tự) và tăng chi phí token (gấp 3-5 lần). Với các tác vụ đơn giản, một prompt single-agent được thiết kế tốt là hoàn toàn đủ, tiết kiệm chi phí và mang lại trải nghiệm nhanh chóng cho người dùng.
+
