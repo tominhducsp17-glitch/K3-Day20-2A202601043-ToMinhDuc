@@ -18,6 +18,7 @@ from multi_agent_research_lab.evaluation.report import render_markdown_report
 from multi_agent_research_lab.graph.workflow import MultiAgentWorkflow
 from multi_agent_research_lab.observability.logging import configure_logging
 from multi_agent_research_lab.services.llm_client import LLMClient
+from multi_agent_research_lab.services.search_client import SearchClient
 
 app = typer.Typer(help="Multi-Agent Research Lab CLI")
 console = Console()
@@ -43,16 +44,33 @@ def _parse_query(query: str) -> ResearchQuery:
 
 
 def run_single_agent_baseline(query_str: str) -> ResearchState:
-    """Execute single-agent baseline."""
+    """Execute single-agent baseline equipped with search tool."""
     request = _parse_query(query_str)
     state = ResearchState(request=request)
+    search_client = SearchClient()
     llm = LLMClient()
 
+    # Step 1: Tool call - search web for sources
+    sources = search_client.search(query=request.query, max_results=request.max_sources)
+    state.sources = sources
+
+    sources_context = []
+    for i, src in enumerate(sources[:3], 1):
+        url_str = f" ({src.url})" if src.url else ""
+        sources_context.append(f"[{i}] {src.title}{url_str}\nSnippet: {src.snippet[:200]}")
+    combined_sources = "\n\n".join(sources_context)
+
+    # Step 2: Single-pass LLM prompt doing all research, analysis, and writing at once
     system_prompt = (
-        "You are an AI research assistant. Provide a comprehensive, accurate, and structured "
-        "response directly addressing the user query in clean Markdown."
+        "You are a single-agent research assistant with a web search tool. "
+        "Review the retrieved search tool results and produce a concise answer with citations."
     )
-    user_prompt = f"Please research and answer: {request.query}"
+    user_prompt = (
+        f"Query: {request.query}\n\n"
+        f"Search Results:\n{combined_sources}\n\n"
+        "Please provide a complete research summary with inline citations and references list."
+    )
+
 
     response = llm.complete(system_prompt=system_prompt, user_prompt=user_prompt)
     state.final_answer = response.content
@@ -61,6 +79,8 @@ def run_single_agent_baseline(query_str: str) -> ResearchState:
             agent=AgentName.WRITER,
             content=response.content,
             metadata={
+                "tool_used": "SearchClient",
+                "sources_count": len(sources),
                 "input_tokens": response.input_tokens,
                 "output_tokens": response.output_tokens,
                 "cost_usd": response.cost_usd,
@@ -68,8 +88,9 @@ def run_single_agent_baseline(query_str: str) -> ResearchState:
         )
     )
     state.iteration = 1
-    state.record_route("single_agent")
+    state.record_route("single_agent_with_search")
     return state
+
 
 
 def run_multi_agent_workflow(query_str: str) -> ResearchState:
